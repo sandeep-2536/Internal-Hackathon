@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+    <title>Solver Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f4f6f8;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .solver-info {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: center;
+      }
+      th {
+        background: #2575fc;
+        color: white;
+      }
+      img {
+        border-radius: 6px;
+      }
+      button {
+        padding: 5px 10px;
+        background: #2575fc;
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      select {
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('partials/nav') %>
+
+    <h1>Solver Dashboard</h1>
+    <div class="solver-info">
+      Logged in as: <%= solver.email %> | Department: <%= department %>
+    </div>
+ 
+    <% if (posts.length === 0) { %>
+      <p style="text-align:center; color: #666;">
+        No reports available for your department yet.
+      </p>
+    <% } else { %>
+      <table>
+        <tr>
+          <th>Title</th>
+          <th>Location</th>
+          <th>Image</th>
+          <th>Status</th>
+          <th>Reporter</th>
+          <th>Action</th>
+        </tr>
+    
+        <% posts.forEach(post => { %>
+          <% if (post.department == department) { %>
+            <tr>
+              <td><%= post.title %></td>
+              <td><%= post.location %></td>
+              <td>
+                <% if (post.image) { %>
+                  <img src="<%= post.image %>" width="100">
+                <% } else { %>
+                  No Image
+                <% } %>
+              </td>
+              <td><%= post.status %></td>
+              <td><%= post.reporter ? post.reporter.email : "Anonymous" %></td>
+              <td>
+                <form action="/solver/update/<%= post._id %>" method="POST">
+                  <select name="status">
+                    <option value="Pending" <%= post.status === "Pending" ? "selected" : "" %>>Pending</option>
+                    <option value="In Progress" <%= post.status === "In Progress" ? "selected" : "" %>>In Progress</option>
+                    <option value="Resolved" <%= post.status === "Resolved" ? "selected" : "" %>>Resolved</option>
+                  </select>
+                  <button type="submit">Update</button>
+                </form>
+              </td>
+            </tr>
+          <% } %>
+        <% }) %>
+      </table>
+    <% } %>
+
+    <footer class="bg-gray-900 text-white py-6 mt-10">
+      <div class="max-w-4xl mx-auto text-center text-gray-300">
+        © 2025 NagarikVoice | Empowering Solvers 🚀
+      </div>
+    </footer>
+  </body>
+</html>

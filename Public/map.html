@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map { height: 100vh; width: 100%; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize Map
+    const map = L.map("map").setView([15.3647, 75.1240], 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Fetch reports from backend
+    fetch("/api/reports")
+      .then(res => res.json())
+      .then(reports => {
+        reports.forEach(report => {
+          if (!report.latitude || !report.longitude) return; // Skip if invalid
+
+          let color;
+          switch (report.status) {
+            case "Pending": color = "red"; break;
+            case "Acknowledged": color = "blue"; break;
+            case "In Progress": color = "orange"; break;
+            case "Resolved": color = "green"; break;
+            default: color = "gray";
+          }
+
+          L.circleMarker([report.latitude, report.longitude], {
+            radius: 8,
+            fillColor: color,
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+          }).addTo(map).bindPopup(`
+            <b>${report.title}</b><br>
+            <i>Status: ${report.status}</i>
+          `);
+        });
+      });
+  </script>
+</body>
+</html>

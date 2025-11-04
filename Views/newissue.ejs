@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      #map {
+        height: 300px;
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 8px;
+      }
+      video,
+      canvas {
+        display: none;
+        margin-top: 10px;
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('partials/nav') %>
+
+    <h2>Report a New Issue</h2>
+
+    <form
+      id="issueForm"
+      action="/issues"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <!-- Issue Title -->
+      <label for="title">Select Issue:</label>
+      <select name="title" id="title" required>
+        <option value="Pothole">Pothole</option>
+        <option value="Streetlight Not Working">Streetlight Not Working</option>
+        <option value="Garbage Overflow">Garbage Overflow</option>
+        <option value="Water Leakage">Water Leakage</option>
+      </select>
+      <br /><br />
+
+      <!-- Department -->
+      <label for="department">Department:</label>
+      <select id="department" name="department" required>
+        <option value="sanitation">Sanitation</option>
+        <option value="roads">Roads</option>
+        <option value="electricity">Electricity</option>
+        <option value="water">Water</option>
+      </select>
+      <br /><br />
+
+      <!-- Upload or capture image -->
+      <label>Image:</label><br />
+      <input type="file" id="imageInput" name="image" accept="image/*" />
+      <button type="button" id="cameraBtn">📷 Capture Photo</button>
+      <br /><br />
+
+      <video id="video" autoplay></video>
+      <button type="button" id="snapBtn" style="display: none">
+        Take Snapshot
+      </button>
+      <canvas id="canvas"></canvas>
+      <br /><br />
+
+      <!-- Location -->
+      <label>Location:</label><br />
+      <input type="text" name="location" id="location" readonly required />
+      <div id="map"></div>
+      <br />
+
+      <!-- Hidden default status -->
+      <input type="hidden" name="status" value="Pending" />
+
+      <button type="submit">Submit Issue</button>
+    </form>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+      const imageInput = document.getElementById("imageInput");
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      const snapBtn = document.getElementById("snapBtn");
+      const cameraBtn = document.getElementById("cameraBtn");
+
+      // ✅ Camera Capture
+      cameraBtn.addEventListener("click", async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.style.display = "block";
+        snapBtn.style.display = "inline-block";
+      });
+
+      snapBtn.addEventListener("click", () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+
+        canvas.toBlob((blob) => {
+          const file = new File([blob], "capture.png", { type: "image/png" });
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          imageInput.files = dataTransfer.files;
+        });
+
+        canvas.style.display = "block";
+        video.style.display = "none";
+        snapBtn.style.display = "none";
+        video.srcObject.getTracks().forEach((track) => track.stop());
+      });
+
+      // ✅ Reverse Geocoding function (Lat/Lng → Address + coordinates)
+      function fetchAddress(lat, lng) {
+        fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            let fullLocation = data.display_name
+              ? `${data.display_name}, ${lat}, ${lng}`
+              : `${lat}, ${lng}`;
+            document.getElementById("location").value = fullLocation;
+          })
+          .catch(() => {
+            document.getElementById("location").value = `${lat}, ${lng}`;
+          });
+      }
+
+      // ✅ Location Handling with Leaflet
+      let map, marker;
+      window.onload = () => {
+        map = L.map("map").setView([20.5937, 78.9629], 5);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((pos) => {
+            const { latitude, longitude } = pos.coords;
+            fetchAddress(latitude, longitude);
+            map.setView([latitude, longitude], 15);
+            marker = L.marker([latitude, longitude]).addTo(map);
+          });
+        }
+
+        map.on("click", (e) => {
+          const { lat, lng } = e.latlng;
+          if (marker) map.removeLayer(marker);
+          marker = L.marker([lat, lng]).addTo(map);
+          fetchAddress(lat, lng);
+        });
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Problem Solver Login</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #2575fc, #6a11cb);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .solver-container {
+      background: #ffffff;
+      padding: 30px 35px;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .solver-container h2 {
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+      color: #333;
+    }
+
+    .solver-container label {
+      display: block;
+      text-align: left;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #444;
+    }
+
+    .solver-container input,
+    .solver-container select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      transition: border 0.3s;
+    }
+
+    .solver-container input:focus,
+    .solver-container select:focus {
+      outline: none;
+      border-color: #2575fc;
+      box-shadow: 0 0 6px rgba(37, 117, 252, 0.3);
+    }
+
+    .solver-container button {
+      width: 100%;
+      padding: 12px;
+      background: #2575fc;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .solver-container button:hover {
+      background: #1a5dcc;
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+  <div class="solver-container">
+    <h2>Problem Solver Login</h2>
+    <div class="lines"><h2>🌆 “Every small issue you solve becomes an invisible blessing for thousands who walk this city.”</h2></div>
+    
+    <form action="/login/solver" method="POST">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="token">Token ID</label>
+      <input type="text" id="token" name="token" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+
+      <!-- ✅ NEW: Department select -->
+      <label for="department">Department</label>
+      <select id="department" name="department" required>
+        <option value="">-- Select Department --</option>
+         <option value="sanitation">Sanitation</option>
+        <option value="roads">Roads</option>
+        <option value="electricity">Electricity</option>
+        <option value="water">Water</option>
+      </select>
+
+      <button type="submit">Login</button> 
+    </form>
+  </div>
+</body>
+</html>

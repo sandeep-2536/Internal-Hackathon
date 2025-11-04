@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= t('app_title') %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#3B82F6',
+              secondary: '#1E40AF',
+              accent: '#F59E0B',
+              success: '#10B981',
+              warning: '#F59E0B',
+              danger: '#EF4444'
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+      <div class="nav max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="logo text-2xl font-bold text-primary">
+            <%= t('app_name') %>
+          </div>
+          <div class="other-navs">
+            <ul class="flex space-x-8">
+              <li><a href="#home" class="text-gray-700 hover:text-primary transition-colors duration-200 font-medium"><%= t('nav_home') %></a></li>
+              <li><a href="#" class="text-gray-700 hover:text-primary transition-colors duration-200 font-medium"><%= t('nav_about') %></a></li>
+              <li><a href="/login" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors duration-200 font-medium"><%= t('nav_login') %></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="home" class="min-h-screen">
+      <div class="banner bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <h2 class="lines text-3xl md:text-5xl font-bold leading-tight mb-8">
+            <%= t('home_banner_title') %> ✨
+          </h2>
+          <div class="language-switcher mb-8 text-white">
+            <span><%= t('change_language_label') %></span>
+            <a href="/change-lang/en" class="hover:underline">English</a> |
+            <a href="/change-lang/hi" class="hover:underline">हिन्दी</a> |
+            <a href="/change-lang/kn" class="hover:underline">ಕನ್ನಡ</a>
+          </div>
+          <a href="/issues/new" class="cta-btn inline-flex items-center bg-accent hover:bg-yellow-500 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            🚀 <%= t('fix_my_city_button') %>
+          </a>
+        </div>
+      </div>
+
+      <div class="py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+          <div class="reported">
+            <div class="text-center mb-12">
+              <h3 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                <%= t('reported_issues_title') %>
+              </h3>
+              <p class="text-xl text-gray-600">
+                <%= t('reported_issues_description') %>
+              </p>
+            </div>
+            
+            <div class="issues grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <% for(let list of posts) { %>
+              <div class="issue bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200">
+                <div class="relative">
+                  <img src="<%=list.image%>" alt="Issue" class="w-full h-48 object-cover">
+                  <div class="absolute top-3 right-3">
+                    <span class="<%=list.status === 'resolved' ? 'bg-success' : list.status === 'in-progress' ? 'bg-primary' : 'bg-warning'%> text-white px-3 py-1 rounded-full text-sm font-medium capitalize">
+                      <%= t('status_' + list.status.toLowerCase().replace(/ /g, '_')) %>
+                    </span>
+                  </div>
+                </div>
+                <div class="p-6">
+                  <p class="prob-title text-lg font-bold text-gray-900 mb-2">
+                    <%= t('issue_type_' + list.title.toLowerCase().replace(/ /g, '_')) %>
+                  </p>    
+                  <p class="prob-location text-gray-600 mb-2 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <%=list.location %>
+                  </p>
+                  <div class="flex items-center justify-between mt-4">
+                    <button 
+                      onclick="toggleEndorse('<%= list._id %>')" 
+                      id="endorse-btn-<%= list._id %>"
+                      class="flex items-center space-x-2 text-gray-600 hover:text-primary transition">
+                      ✋ 
+                      <span id="endorse-count-<%= list._id %>"><%= list.endorsements.length %></span>
+                    </button>
+                    <button class="text-primary hover:text-secondary font-medium text-sm">
+                      <%= t('view_details_button') %> →
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-gray-900 text-white py-8 px-4">
+      <div class="max-w-7xl mx-auto text-center">
+        <p class="text-gray-300">
+          <%= t('footer_text') %>
+        </p>
+        <div class="mt-4 flex justify-center space-x-6">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><%= t('privacy_policy') %></a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><%= t('terms_of_service') %></a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><%= t('contact_us') %></a>
+        </div>
+      </div>
+    </footer>
+    
+    <script>
+      async function toggleEndorse(postId) {
+        try {
+          const res = await fetch(`/posts/${postId}/endorse`, { method: "POST" });
+          const data = await res.json();
+          document.getElementById(`endorse-count-${postId}`).innerText = data.count;
+        } catch (err) {
+          console.error("Error:", err);
+          alert("Something went wrong!");
+        }
+      }
+    </script>
+  </body>
+</html>

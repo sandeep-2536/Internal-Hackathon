@@ -1,0 +1,51 @@
+<body>
+    
+  <div class="container">
+    <!-- Login Form -->
+    <div class="form-box">
+      <h2>Login</h2>
+      <form action="/login" method="POST">
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" name="email" required>
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">Login</button>
+      </form>
+    </div>
+
+    <!-- Signup Form -->
+    <div class="form-box">
+      <h2>Signup</h2>
+      <form action="/signup" method="POST">
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" name="username" required>
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" name="email" required>
+        </div>
+        <div class="input-group">
+          <label>New Password</label>
+          <input type="password" name="password" required>
+        </div>
+        <div class="input-group">
+          <label>Confirm Password</label>
+          <input type="password" name="confirmPassword" required>
+        </div>
+        <button type="submit" class="btn signup-btn">Signup</button>
+      </form>
+    </div>
+  </div>
+
+<div class="link-box">
+  <p>Are you a <span>Problem Solver?</span></p>
+  <a href="http://localhost:3001/login/solver" class="cta-button">Click Here</a>
+</div>
+
+</body>
+</html>

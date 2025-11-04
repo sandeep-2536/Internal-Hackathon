@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+    <style>
+      .badge {
+        display: inline-block;
+        background: #3B82F6;
+        color: white;
+        padding: 6px 12px;
+        margin: 4px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <%- include('partials/nav') %>
+
+    <div class="max-w-4xl mx-auto py-10 px-6">
+      <h1 class="text-2xl font-bold mb-2">Welcome <%= user.email %></h1>
+      <a href="/logout" class="text-red-600 hover:underline">Logout</a>
+
+      <!-- Progress Section -->
+      <section class="mt-8">
+        <h2 class="text-xl font-semibold mb-2">Your Progress</h2>
+        <p class="text-gray-700">
+          You have earned <strong><%= user.points %></strong> points so far 🎯
+        </p>
+        <p class="mt-2 text-gray-600">
+          <% if (user.points < 100) { %>
+            🌱 Keep going! Every report you make plants a seed of change.  
+          <% } else if (user.points < 500) { %>
+            🔥 Great work! You're becoming a true Change Maker.  
+          <% } else { %>
+            🌟 Amazing! You’re inspiring others with your dedication!  
+          <% } %>
+        </p>
+      </section>
+
+      <!-- Badges Section -->
+      <section class="mt-8">
+        <h2 class="text-xl font-semibold mb-2">Your Earned Badges</h2>
+        <div>
+          <% if (user.badges.length > 0) { %>
+            <% user.badges.forEach(badge => { %>
+              <span class="badge"><%= badge %></span>
+            <% }) %>
+          <% } else { %>
+            <p class="text-gray-600">No badges earned yet. Report more issues to earn badges!</p>
+          <% } %>
+        </div>
+      </section>
+
+      <hr class="my-8"/>
+
+      <!-- Issues Section -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Your Issues</h2>
+        <div class="space-y-6">
+          <% posts.forEach(post => { %>
+            <div class="bg-white shadow-md rounded-lg p-4 border border-gray-200">
+              <h3 class="text-lg font-bold"><%= post.title %></h3>
+              <p class="text-gray-600"><%= post.location %></p>
+              <p class="text-sm text-gray-500">Status: <%= post.status %></p>
+
+              <!-- Edit Form -->
+              <form action="/posts/<%= post._id %>/edit" method="POST" class="mt-3 space-y-2">
+                <input type="text" name="title" value="<%= post.title %>" class="border rounded p-2 w-full"/>
+                <input type="text" name="location" value="<%= post.location %>" class="border rounded p-2 w-full"/>
+                <input type="text" name="status" value="<%= post.status %>" class="border rounded p-2 w-full"/>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                  Update
+                </button>
+              </form>
+
+              <!-- Delete Form -->
+              <form action="/posts/<%= post._id %>/delete" method="POST" class="mt-2">
+                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                  Delete
+                </button>
+              </form>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+    </div>
+
+    <footer class="bg-gray-900 text-white py-6 mt-10">
+      <div class="max-w-4xl mx-auto text-center text-gray-300">
+        © 2025 NagarikVoice | Built with ❤️ for SIH Hackathon
+      </div>
+    </footer>
+  </body>
+</html>
